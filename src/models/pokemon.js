@@ -1,3 +1,5 @@
+const validTypes = ['Plante', 'Poison', 'Feu', 'Eau', 'Insecte', 'Vol', 'Normal', 'Electrik', 'Fée']
+
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Pokemon', {
         id: {
@@ -61,6 +63,21 @@ module.exports = (sequelize, DataTypes) => {
             },
             set(types) {
                 this.setDataValue('types', types.join())
+            },
+            validate: {
+                isTypesValid(value) {
+                    if(!value) {
+                        throw new Error('Un Pokémon doit au moins avoir un type.')
+                    }
+                    if(value.split(',').length > 3) {
+                        throw new Error('Un Pokémon ne peux pas avoir plus de trois types.')
+                    }
+                    value.split(',').forEach(type => {
+                        if(!validTypes.includes(type)) {
+                            throw new Error(`Le type d'un Pokémon doit appartenir à la liste suivante : ${validTypes}`)
+                        }
+                    });
+                }
             }
         }
     },
